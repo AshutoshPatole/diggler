@@ -1,0 +1,6 @@
+GEMINI.md
+CLAUDE.md
+
+.env
+build/
+vendor/

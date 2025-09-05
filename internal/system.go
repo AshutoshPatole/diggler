@@ -2,8 +2,10 @@ package internal
 
 import (
 	"fmt"
+	"os"
 	"runtime"
 
+	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/shirou/gopsutil/v4/cpu"
 	"github.com/shirou/gopsutil/v4/host"
 	"github.com/shirou/gopsutil/v4/mem"
@@ -11,43 +13,57 @@ import (
 
 func GetHostInfo() {
 	h, _ := host.Info()
-
-	fmt.Printf("Operating System : %s\n", h.OS)
-
-	fmt.Printf("Platform : %s\n", h.Platform)
-
-	fmt.Printf("Platform Version : %s\n", h.PlatformVersion)
-
-	fmt.Printf("Kernel Architecture : %s\n", h.KernelArch)
-
-	fmt.Printf("Kernel Version : %s\n", h.KernelVersion)
+	t := table.NewWriter()
+	t.SetOutputMirror(os.Stdout)
+	t.SetTitle("Host Information")
+	t.AppendHeader(table.Row{"Category", "Value"})
+	t.AppendRows([]table.Row{
+		{"Operating System", h.OS},
+		{"Platform", h.Platform},
+		{"Platform Version", h.PlatformVersion},
+		{"Kernel Architecture", h.KernelArch},
+		{"Kernel Version", h.KernelVersion},
+	})
 	if h.VirtualizationSystem == "" {
-		fmt.Printf("Virtualization System : Not Available\n")
+		t.AppendRow(table.Row{"Virtualization System", "Not Available"})
 	} else {
-		fmt.Printf("Virtualization System : %s\n", h.VirtualizationSystem)
+		t.AppendRow(table.Row{"Virtualization System", h.VirtualizationSystem})
 	}
+	t.Render()
 }
 
 func GetCPUInfo() {
 	c, _ := cpu.Info()
-	fmt.Printf("CPU Cores : %d\n", runtime.NumCPU())
-	fmt.Printf("CPU Model : %s\n", c[0].ModelName)
-	fmt.Printf("CPU Vendor : %s\n", c[0].VendorID)
+	t := table.NewWriter()
+	t.SetOutputMirror(os.Stdout)
+	t.SetTitle("CPU Information")
+	t.AppendHeader(table.Row{"Category", "Value"})
+	t.AppendRows([]table.Row{
+		{"CPU Cores", runtime.NumCPU()},
+		{"CPU Model", c[0].ModelName},
+		{"CPU Vendor", c[0].VendorID},
+	})
+	t.Render()
 }
 
 func GetMemoryInfo() {
 	m, _ := mem.VirtualMemory()
-	fmt.Printf("Total Memory : %.2f GB\n", float64(m.Total)/1024/1024/1024)
-	fmt.Printf("Available Memory : %.2f GB\n", float64(m.Available)/1024/1024/1024)
-	fmt.Printf("Used Memory : %.2f GB\n", float64(m.Used)/1024/1024/1024)
-	fmt.Printf("Used Percentage : %.2f %%\n", m.UsedPercent)
-
-	fmt.Printf("Swap Total : %.2f GB\n", float64(m.SwapTotal)/1024/1024/1024)
-	fmt.Printf("Swap Free : %.2f GB\n", float64(m.SwapFree)/1024/1024/1024)
-
-	fmt.Printf("Huge Pages Total : %d\n", m.HugePagesTotal)
-	fmt.Printf("Huge Pages Free : %d\n", m.HugePagesFree)
-	fmt.Printf("Huge Pages Surp : %d\n", m.HugePagesSurp)
-	fmt.Printf("Huge Pages Size : %d\n", m.HugePageSize)
-	fmt.Printf("Anon Huge Pages : %d\n", m.AnonHugePages)
+	t := table.NewWriter()
+	t.SetOutputMirror(os.Stdout)
+	t.SetTitle("Memory Information")
+	t.AppendHeader(table.Row{"Category", "Value"})
+	t.AppendRows([]table.Row{
+		{"Total Memory", fmt.Sprintf("%.2f GB", float64(m.Total)/1024/1024/1024)},
+		{"Available Memory", fmt.Sprintf("%.2f GB", float64(m.Available)/1024/1024/1024)},
+		{"Used Memory", fmt.Sprintf("%.2f GB", float64(m.Used)/1024/1024/1024)},
+		{"Used Percentage", fmt.Sprintf("%.2f %%", m.UsedPercent)},
+		{"Swap Total", fmt.Sprintf("%.2f GB", float64(m.SwapTotal)/1024/1024/1024)},
+		{"Swap Free", fmt.Sprintf("%.2f GB", float64(m.SwapFree)/1024/1024/1024)},
+		{"Huge Pages Total", m.HugePagesTotal},
+		{"Huge Pages Free", m.HugePagesFree},
+		{"Huge Pages Surp", m.HugePagesSurp},
+		{"Huge Pages Size", m.HugePageSize},
+		{"Anon Huge Pages", m.AnonHugePages},
+	})
+	t.Render()
 }

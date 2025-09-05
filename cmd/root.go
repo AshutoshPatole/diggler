@@ -10,15 +10,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var save bool
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "diggler",
 	Short: "A tool for gathering system information for forensic analysis",
 	Long:  `Diggler is a tool for gathering system information for forensic analysis. This tool will gather various system information such as network interfaces, system logs, process information, and more.`,
 
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
+		if save {
+			file, err := os.Create("system_info.txt")
+			if err != nil {
+				panic(err)
+			}
+			defer file.Close()
+			os.Stdout = file
+		}
 		internal.GetHostInfo()
 		internal.GetCPUInfo()
 		internal.GetMemoryInfo()
@@ -35,6 +43,5 @@ func Execute() {
 }
 
 func init() {
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.diggler.yaml)")
-	rootCmd.Flags().BoolP("help", "h", false, "Help message for toggle")
+	rootCmd.Flags().BoolVarP(&save, "save", "s", false, "Save the output to a file")
 }
