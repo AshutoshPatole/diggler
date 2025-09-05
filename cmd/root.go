@@ -1,30 +1,26 @@
 /*
 Copyright © 2025 AshutoshPatole
-
 */
 package cmd
 
 import (
 	"os"
 
+	"github.com/AshutoshPatole/diggler/internal"
 	"github.com/spf13/cobra"
 )
-
-
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "diggler",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "A tool for gathering system information for forensic analysis",
+	Long:  `Diggler is a tool for gathering system information for forensic analysis. This tool will gather various system information such as network interfaces, system logs, process information, and more.`,
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		internal.GetSystemInfo()
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -37,15 +33,6 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.diggler.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().BoolP("help", "h", false, "Help message for toggle")
 }
-
-
