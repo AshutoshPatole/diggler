@@ -30,6 +30,11 @@ var rootCmd = &cobra.Command{
 		internal.GetHostInfo()
 		internal.GetCPUInfo()
 		internal.GetMemoryInfo()
+		internal.GetNTPInfo()
+		internal.GetOpenFiles()
+		internal.GetConnections()
+		internal.GetSELinuxInfo()
+		internal.GetAppArmorInfo()
 	},
 }
 
