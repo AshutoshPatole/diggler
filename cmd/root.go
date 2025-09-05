@@ -19,7 +19,9 @@ var rootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		internal.GetSystemInfo()
+		internal.GetHostInfo()
+		internal.GetCPUInfo()
+		internal.GetMemoryInfo()
 	},
 }
 
