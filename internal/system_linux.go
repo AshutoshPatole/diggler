@@ -84,3 +84,13 @@ func GetDNSInfo() {
 	t.AppendRow(table.Row{resolve})
 	t.Render()
 }
+
+func GetHostsFileInfo() {
+	t := NewTable("Hosts File Information", nil)
+	resolve, err := runCommand("cat", "/etc/hosts")
+	if err != nil {
+		return
+	}
+	t.AppendRow(table.Row{resolve})
+	t.Render()
+}

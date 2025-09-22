@@ -15,7 +15,6 @@ import (
 
 var TABLE_STYLE table.Style = table.StyleBold
 
-
 func GetHostInfo() {
 	h, _ := host.Info()
 	t := NewTable("Host Information", table.Row{"Category", "Value"})
