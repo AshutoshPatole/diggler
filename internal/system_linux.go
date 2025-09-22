@@ -3,8 +3,10 @@
 package internal
 
 import (
-	"fmt"
+	"os"
 	"os/exec"
+
+	"github.com/jedib0t/go-pretty/v6/table"
 )
 
 func runCommand(command string, args ...string) (string, error) {
@@ -22,51 +24,77 @@ func isCommandAvailable(command string) bool {
 }
 
 func GetSecurityInfo() {
+	t := table.NewWriter()
+	t.SetStyle(TABLE_STYLE)
+	t.SetOutputMirror(os.Stdout)
+	t.SetTitle("Security Information")
 	if isCommandAvailable("sestatus") {
 		selinuxStatus, err := runCommand("sestatus")
 		if err != nil {
 			return
 		}
-		fmt.Printf("\n\nSELinux Information:\n%s\n", selinuxStatus)
+		t.AppendRow(table.Row{"SELinux Information", selinuxStatus})
 	}
 	if isCommandAvailable("apparmor_status") {
 		profile, err := runCommand("apparmor_status")
 		if err != nil {
 			return
 		}
-		fmt.Printf("\n\nAppArmor Information:\n%s\n", profile)
+		t.AppendRow(table.Row{"AppArmor Information", profile})
 	}
+	t.Render()
 }
 
 func FirewallStat() {
 	if isCommandAvailable("firewall-cmd") {
-		fmt.Printf("\n\nFirewall Status")
+		t := table.NewWriter()
+		t.SetStyle(TABLE_STYLE)
+		t.SetOutputMirror(os.Stdout)
+		t.SetTitle("Firewall Status")
 		status, err := runCommand("firewall-cmd", "--state")
 		if err != nil {
 			return
 		}
-		fmt.Printf("Status: %s\n", status)
+		t.AppendRow(table.Row{"Status", status})
 
 		rules, err := runCommand("firewall-cmd", "--list-all")
 		if err != nil {
 			return
 		}
-		fmt.Printf("Rules: %s\n", rules)
+		t.AppendRow(table.Row{"Rules", rules})
+		t.Render()
 	}
 
 	if isCommandAvailable("ufw") {
 
-		fmt.Printf("\n\nUFW Status")
+		t := table.NewWriter()
+		t.SetStyle(TABLE_STYLE)
+		t.SetOutputMirror(os.Stdout)
+		t.SetTitle("UFW Status")
 		status, err := runCommand("ufw", "status")
 		if err != nil {
 			return
 		}
-		fmt.Printf("Status: %s\n", status)
+		t.AppendRow(table.Row{"Status", status})
 
 		rules, err := runCommand("ufw", "status", "verbose")
 		if err != nil {
 			return
 		}
-		fmt.Printf("Rules: %s\n", rules)
+		t.AppendRow(table.Row{"Rules", rules})
+		t.Render()
 	}
+}
+
+func GetDNSInfo() {
+	t := table.NewWriter()
+	t.SetStyle(TABLE_STYLE)
+	t.SetOutputMirror(os.Stdout)
+	t.SetTitle("DNS Information")
+	resolve, err := runCommand("cat", "/etc/resolv.conf")
+	if err != nil {
+		return
+	}
+	t.AppendRow(table.Row{"Resolve", resolve})
+	t.Render()
 }
