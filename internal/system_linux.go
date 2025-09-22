@@ -66,7 +66,6 @@ func FirewallStat() {
 	}
 
 	if isCommandAvailable("ufw") {
-
 		t := table.NewWriter()
 		t.SetStyle(TABLE_STYLE)
 		t.SetOutputMirror(os.Stdout)
@@ -91,10 +90,10 @@ func GetDNSInfo() {
 	t.SetStyle(TABLE_STYLE)
 	t.SetOutputMirror(os.Stdout)
 	t.SetTitle("DNS Information")
-	resolve, err := runCommand("cat", "/etc/resolv.conf")
+	resolve, err := runCommand("grep", "-v", "#", "/etc/resolv.conf")
 	if err != nil {
 		return
 	}
-	t.AppendRow(table.Row{"Resolve", resolve})
+	t.AppendRow(table.Row{resolve})
 	t.Render()
 }

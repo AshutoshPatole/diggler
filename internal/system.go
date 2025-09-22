@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"time"
 
 	"github.com/beevik/ntp"
+	"github.com/briandowns/spinner"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/shirou/gopsutil/v4/cpu"
 	"github.com/shirou/gopsutil/v4/host"
@@ -100,12 +102,18 @@ func GetNTPInfo() {
 	t.Render()
 }
 
-func GetOpenFiles() {
+func GetProcessInfo() {
+
+	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
+	s.Start()
+	s.HideCursor = true
+	s.Color("fgGreen")
+	s.Suffix = " Gathering process information..."
 	processes, _ := process.Processes()
 	t := table.NewWriter()
 	t.SetStyle(TABLE_STYLE)
 	t.SetOutputMirror(os.Stdout)
-	t.SetTitle("Open Files")
+	t.SetTitle("Process Information")
 	t.AppendHeader(table.Row{"PID", "Process", "Path"})
 	for _, p := range processes {
 		name, _ := p.Name()
@@ -117,10 +125,16 @@ func GetOpenFiles() {
 			t.AppendRow(table.Row{p.Pid, name, file.Path})
 		}
 	}
+	s.Stop()
 	t.Render()
 }
 
 func GetConnections() {
+	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
+	s.Start()
+	s.HideCursor = true
+	s.Color("fgGreen")
+	s.Suffix = " Gathering network connections..."
 	connections, _ := net.Connections("all")
 	t := table.NewWriter()
 	t.SetStyle(TABLE_STYLE)
@@ -130,5 +144,6 @@ func GetConnections() {
 	for _, conn := range connections {
 		t.AppendRow(table.Row{conn.Pid, fmt.Sprintf("%s:%d", conn.Laddr.IP, conn.Laddr.Port), fmt.Sprintf("%s:%d", conn.Raddr.IP, conn.Raddr.Port), conn.Status})
 	}
+	s.Stop()
 	t.Render()
 }

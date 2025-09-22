@@ -3,8 +3,10 @@
 package internal
 
 import (
-	"fmt"
+	"os"
 	"os/exec"
+
+	"github.com/jedib0t/go-pretty/v6/table"
 )
 
 func GetSecurityInfo() {
@@ -16,10 +18,14 @@ func FirewallStat() {
 }
 
 func GetDNSInfo() {
-	fmt.Printf("\n\nDNS\n")
+	t := table.NewWriter()
+	t.SetStyle(TABLE_STYLE)
+	t.SetOutputMirror(os.Stdout)
+	t.SetTitle("DNS Information")
 	dnsinfo, err := exec.Command("netsh", "interface", "ip", "show", "dns").Output()
 	if err != nil {
 		return
 	}
-	fmt.Printf("%s\n", dnsinfo)
+	t.AppendRow(table.Row{string(dnsinfo)})
+	t.Render()
 }

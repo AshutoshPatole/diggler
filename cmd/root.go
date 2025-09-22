@@ -27,15 +27,16 @@ var rootCmd = &cobra.Command{
 			defer file.Close()
 			os.Stdout = file
 		}
+
 		internal.GetHostInfo()
 		internal.GetCPUInfo()
 		internal.GetMemoryInfo()
 		internal.GetNTPInfo()
-		// internal.GetOpenFiles()
-		// internal.GetConnections()
-		// internal.GetSecurityInfo()
-		// internal.FirewallStat()
-		// internal.GetDNSInfo()
+		internal.GetProcessInfo()
+		internal.GetConnections()
+		internal.GetSecurityInfo()
+		internal.FirewallStat()
+		internal.GetDNSInfo()
 	},
 }
 
