@@ -1,11 +1,11 @@
-// +build windows
+//go:build windows
 
 package internal
 
-func GetSELinuxInfo() {
+func GetSecurityInfo() {
 	// Not implemented on Windows
 }
 
-func GetAppArmorInfo() {
+func FirewallStat() {
 	// Not implemented on Windows
 }

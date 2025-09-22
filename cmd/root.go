@@ -33,8 +33,7 @@ var rootCmd = &cobra.Command{
 		internal.GetNTPInfo()
 		internal.GetOpenFiles()
 		internal.GetConnections()
-		internal.GetSELinuxInfo()
-		internal.GetAppArmorInfo()
+		internal.GetSecurityInfo()
 	},
 }
 

@@ -1,44 +1,47 @@
 //go:build linux
-// +build linux
 
 package internal
 
 import (
-	"os"
-	"path/filepath"
-
-	"github.com/jedib0t/go-pretty/v6/table"
+	"fmt"
+	"os/exec"
 )
 
-func GetSELinuxInfo() {
-	selinuxStatus, err := os.ReadFile("/sys/fs/selinux/enforce")
+func runCommand(command string, args ...string) (string, error) {
+	cmd := exec.Command(command, args...)
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return
+		return "", err
 	}
-	t := table.NewWriter()
-	t.SetOutputMirror(os.Stdout)
-	t.SetTitle("SELinux Information")
-	t.AppendHeader(table.Row{"Category", "Value"})
-	t.AppendRows([]table.Row{
-		{"SELinux Status", string(selinuxStatus)},
-		{"Enforce Mode", filepath.Base(string(selinuxStatus))},
-	})
-	t.Render()
+	return string(output), nil
 }
 
-func GetAppArmorInfo() {
-	profile, err := os.ReadFile("/proc/self/attr/current")
+func isCommandAvailable(command string) bool {
+	_, err := exec.LookPath(command)
+	return err == nil
+}
+
+func getSELinuxInfo() {
+	selinuxStatus, err := runCommand("sestatus")
 	if err != nil {
 		return
 	}
-	if string(profile) != "unconfined" {
-		t := table.NewWriter()
-		t.SetOutputMirror(os.Stdout)
-		t.SetTitle("AppArmor Information")
-		t.AppendHeader(table.Row{"Category", "Value"})
-		t.AppendRows([]table.Row{
-			{"AppArmor Status", "Enabled"},
-		})
-		t.Render()
+	fmt.Printf("\n\nSELinux Information:\n%s\n", selinuxStatus)
+}
+
+func getAppArmorInfo() {
+	profile, err := runCommand("apparmor_status")
+	if err != nil {
+		return
+	}
+	fmt.Printf("\n\nAppArmor Information:\n%s\n", profile)
+}
+
+func GetSecurityInfo() {
+	if isCommandAvailable("sestatus") {
+		getSELinuxInfo()
+	}
+	if isCommandAvailable("apparmor_status") {
+		getAppArmorInfo()
 	}
 }

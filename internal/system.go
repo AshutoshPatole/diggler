@@ -14,9 +14,12 @@ import (
 	"github.com/shirou/gopsutil/v4/process"
 )
 
+var TABLE_STYLE table.Style = table.StyleBold
+
 func GetHostInfo() {
 	h, _ := host.Info()
 	t := table.NewWriter()
+	t.SetStyle(TABLE_STYLE)
 	t.SetOutputMirror(os.Stdout)
 	t.SetTitle("Host Information")
 	t.AppendHeader(table.Row{"Category", "Value"})
@@ -38,6 +41,7 @@ func GetHostInfo() {
 func GetCPUInfo() {
 	c, _ := cpu.Info()
 	t := table.NewWriter()
+	t.SetStyle(TABLE_STYLE)
 	t.SetOutputMirror(os.Stdout)
 	t.SetTitle("CPU Information")
 	t.AppendHeader(table.Row{"Category", "Value"})
@@ -52,6 +56,7 @@ func GetCPUInfo() {
 func GetMemoryInfo() {
 	m, _ := mem.VirtualMemory()
 	t := table.NewWriter()
+	t.SetStyle(TABLE_STYLE)
 	t.SetOutputMirror(os.Stdout)
 	t.SetTitle("Memory Information")
 	t.AppendHeader(table.Row{"Category", "Value"})
@@ -77,6 +82,7 @@ func GetNTPInfo() {
 		return
 	}
 	t := table.NewWriter()
+	t.SetStyle(TABLE_STYLE)
 	t.SetOutputMirror(os.Stdout)
 	t.SetTitle("NTP Information")
 	t.AppendHeader(table.Row{"Category", "Value"})
@@ -97,6 +103,7 @@ func GetNTPInfo() {
 func GetOpenFiles() {
 	processes, _ := process.Processes()
 	t := table.NewWriter()
+	t.SetStyle(TABLE_STYLE)
 	t.SetOutputMirror(os.Stdout)
 	t.SetTitle("Open Files")
 	t.AppendHeader(table.Row{"PID", "Process", "Path"})
@@ -116,6 +123,7 @@ func GetOpenFiles() {
 func GetConnections() {
 	connections, _ := net.Connections("all")
 	t := table.NewWriter()
+	t.SetStyle(TABLE_STYLE)
 	t.SetOutputMirror(os.Stdout)
 	t.SetTitle("Network Connections")
 	t.AppendHeader(table.Row{"PID", "Local Address", "Remote Address", "Status"})
@@ -124,4 +132,3 @@ func GetConnections() {
 	}
 	t.Render()
 }
-
