@@ -4,13 +4,13 @@ go 1.24.3
 
 require (
 	github.com/beevik/ntp v1.4.3
+	github.com/briandowns/spinner v1.23.2
 	github.com/jedib0t/go-pretty/v6 v6.6.8
 	github.com/shirou/gopsutil/v4 v4.25.8
 	github.com/spf13/cobra v1.10.1
 )
 
 require (
-	github.com/briandowns/spinner v1.23.2 // indirect
 	github.com/ebitengine/purego v0.8.4 // indirect
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect

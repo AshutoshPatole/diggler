@@ -2,12 +2,9 @@ package internal
 
 import (
 	"fmt"
-	"os"
 	"runtime"
-	"time"
 
 	"github.com/beevik/ntp"
-	"github.com/briandowns/spinner"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/shirou/gopsutil/v4/cpu"
 	"github.com/shirou/gopsutil/v4/host"
@@ -18,13 +15,10 @@ import (
 
 var TABLE_STYLE table.Style = table.StyleBold
 
+
 func GetHostInfo() {
 	h, _ := host.Info()
-	t := table.NewWriter()
-	t.SetStyle(TABLE_STYLE)
-	t.SetOutputMirror(os.Stdout)
-	t.SetTitle("Host Information")
-	t.AppendHeader(table.Row{"Category", "Value"})
+	t := NewTable("Host Information", table.Row{"Category", "Value"})
 	t.AppendRows([]table.Row{
 		{"Operating System", h.OS},
 		{"Platform", h.Platform},
@@ -42,11 +36,7 @@ func GetHostInfo() {
 
 func GetCPUInfo() {
 	c, _ := cpu.Info()
-	t := table.NewWriter()
-	t.SetStyle(TABLE_STYLE)
-	t.SetOutputMirror(os.Stdout)
-	t.SetTitle("CPU Information")
-	t.AppendHeader(table.Row{"Category", "Value"})
+	t := NewTable("CPU Information", table.Row{"Category", "Value"})
 	t.AppendRows([]table.Row{
 		{"CPU Cores", runtime.NumCPU()},
 		{"CPU Model", c[0].ModelName},
@@ -57,11 +47,7 @@ func GetCPUInfo() {
 
 func GetMemoryInfo() {
 	m, _ := mem.VirtualMemory()
-	t := table.NewWriter()
-	t.SetStyle(TABLE_STYLE)
-	t.SetOutputMirror(os.Stdout)
-	t.SetTitle("Memory Information")
-	t.AppendHeader(table.Row{"Category", "Value"})
+	t := NewTable("Memory Information", table.Row{"Category", "Value"})
 	t.AppendRows([]table.Row{
 		{"Total Memory", fmt.Sprintf("%.2f GB", float64(m.Total)/1024/1024/1024)},
 		{"Available Memory", fmt.Sprintf("%.2f GB", float64(m.Available)/1024/1024/1024)},
@@ -83,11 +69,7 @@ func GetNTPInfo() {
 	if err != nil {
 		return
 	}
-	t := table.NewWriter()
-	t.SetStyle(TABLE_STYLE)
-	t.SetOutputMirror(os.Stdout)
-	t.SetTitle("NTP Information")
-	t.AppendHeader(table.Row{"Category", "Value"})
+	t := NewTable("NTP Information", table.Row{"Category", "Value"})
 	t.AppendRows([]table.Row{
 		{"Clock Offset", response.ClockOffset},
 		{"Stratum", response.Stratum},
@@ -104,17 +86,9 @@ func GetNTPInfo() {
 
 func GetProcessInfo() {
 
-	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
-	s.Start()
-	s.HideCursor = true
-	s.Color("fgGreen")
-	s.Suffix = " Gathering process information..."
+	s := StartSpinner("Gathering process information...")
 	processes, _ := process.Processes()
-	t := table.NewWriter()
-	t.SetStyle(TABLE_STYLE)
-	t.SetOutputMirror(os.Stdout)
-	t.SetTitle("Process Information")
-	t.AppendHeader(table.Row{"PID", "Process", "Path"})
+	t := NewTable("Process Information", table.Row{"PID", "Process", "Path"})
 	for _, p := range processes {
 		name, _ := p.Name()
 		openFiles, err := p.OpenFiles()
@@ -130,17 +104,9 @@ func GetProcessInfo() {
 }
 
 func GetConnections() {
-	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
-	s.Start()
-	s.HideCursor = true
-	s.Color("fgGreen")
-	s.Suffix = " Gathering network connections..."
+	s := StartSpinner("Gathering network connections...")
 	connections, _ := net.Connections("all")
-	t := table.NewWriter()
-	t.SetStyle(TABLE_STYLE)
-	t.SetOutputMirror(os.Stdout)
-	t.SetTitle("Network Connections")
-	t.AppendHeader(table.Row{"PID", "Local Address", "Remote Address", "Status"})
+	t := NewTable("Network Connections", table.Row{"PID", "Local Address", "Remote Address", "Status"})
 	for _, conn := range connections {
 		t.AppendRow(table.Row{conn.Pid, fmt.Sprintf("%s:%d", conn.Laddr.IP, conn.Laddr.Port), fmt.Sprintf("%s:%d", conn.Raddr.IP, conn.Raddr.Port), conn.Status})
 	}

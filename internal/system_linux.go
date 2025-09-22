@@ -3,7 +3,6 @@
 package internal
 
 import (
-	"os"
 	"os/exec"
 
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -24,10 +23,7 @@ func isCommandAvailable(command string) bool {
 }
 
 func GetSecurityInfo() {
-	t := table.NewWriter()
-	t.SetStyle(TABLE_STYLE)
-	t.SetOutputMirror(os.Stdout)
-	t.SetTitle("Security Information")
+	t := NewTable("Security Information", table.Row{"Category", "Value"})
 	if isCommandAvailable("sestatus") {
 		selinuxStatus, err := runCommand("sestatus")
 		if err != nil {
@@ -47,10 +43,7 @@ func GetSecurityInfo() {
 
 func FirewallStat() {
 	if isCommandAvailable("firewall-cmd") {
-		t := table.NewWriter()
-		t.SetStyle(TABLE_STYLE)
-		t.SetOutputMirror(os.Stdout)
-		t.SetTitle("Firewall Status")
+		t := NewTable("Firewall Status", table.Row{"Category", "Value"})
 		status, err := runCommand("firewall-cmd", "--state")
 		if err != nil {
 			return
@@ -66,10 +59,7 @@ func FirewallStat() {
 	}
 
 	if isCommandAvailable("ufw") {
-		t := table.NewWriter()
-		t.SetStyle(TABLE_STYLE)
-		t.SetOutputMirror(os.Stdout)
-		t.SetTitle("UFW Status")
+		t := NewTable("UFW Status", table.Row{"Category", "Value"})
 		status, err := runCommand("ufw", "status")
 		if err != nil {
 			return
@@ -86,10 +76,7 @@ func FirewallStat() {
 }
 
 func GetDNSInfo() {
-	t := table.NewWriter()
-	t.SetStyle(TABLE_STYLE)
-	t.SetOutputMirror(os.Stdout)
-	t.SetTitle("DNS Information")
+	t := NewTable("DNS Information", nil)
 	resolve, err := runCommand("grep", "-v", "#", "/etc/resolv.conf")
 	if err != nil {
 		return
